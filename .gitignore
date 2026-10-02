@@ -1,0 +1,11 @@
+# Backend
+backend/venv/
+backend/nagrivanta.db
+backend/.pytest_cache/
+backend/artifacts/
+__pycache__/
+*.py[cod]
+
+# Freebuff metadata
+.freebuff/
+project-id
