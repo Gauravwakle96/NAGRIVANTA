@@ -8,6 +8,7 @@ import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom'
 import { AppShell } from '@/components/layout/AppShell'
 import { LoadingState } from '@/components/states'
 import { RequireRole } from '@/routes/guards'
+import { BASE_PATH } from '@/config/app'
 import Landing from '@/pages/Landing'
 
 const ReportIssue = lazy(() => import('@/pages/ReportIssue'))
@@ -37,7 +38,7 @@ function Page({ children }: { children: React.ReactNode }) {
 
 export default function App() {
   return (
-    <BrowserRouter>
+    <BrowserRouter basename={BASE_PATH}>
       <Routes>
         {/* Public, no shell chrome */}
         <Route path="/" element={<Landing />} />
@@ -215,7 +216,7 @@ export default function App() {
               <div className="py-20 text-center">
                 <h1 className="text-2xl font-bold">Page not found</h1>
                 <p className="mt-2 text-muted-foreground">That route does not exist.</p>
-                <a className="mt-4 inline-block underline" href="/">Back to home</a>
+                <a className="mt-4 inline-block underline" href={`${BASE_PATH}/`}>Back to home</a>
               </div>
             </AppShell>
           }

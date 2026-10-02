@@ -2,6 +2,7 @@
 
 from functools import lru_cache
 
+from pydantic import field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -25,7 +26,22 @@ class Settings(BaseSettings):
     default_role: str = "CITY_ADMIN"
     default_user_id: str = "u-admin-1"
 
-    cors_origins: list[str] = ["http://localhost:5173", "http://127.0.0.1:5173"]
+    # Local dev origins + the deployed GitHub Pages frontend.
+    # Override with a comma-separated CORS_ORIGINS env var in production.
+    cors_origins: list[str] = [
+        "http://localhost:5173",
+        "http://127.0.0.1:5173",
+        "http://localhost:8000",
+        "https://gauravwakle96.github.io",
+    ]
+
+    @field_validator("cors_origins", mode="before")
+    @classmethod
+    def _split_cors_origins(cls, value: object) -> object:
+        """Accept a comma-separated CORS_ORIGINS env var (Render, Heroku)."""
+        if isinstance(value, str):
+            return [origin.strip() for origin in value.split(",") if origin.strip()]
+        return value
 
     # Future provider selection — boundaries exist, integrations are NOT faked.
     notification_provider: str = "demo"  # demo | email | sms | whatsapp (future)

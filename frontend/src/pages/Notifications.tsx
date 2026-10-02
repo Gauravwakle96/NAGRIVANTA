@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { useMarkNotificationRead, useNotifications } from '@/hooks/useService'
+import { BASE_PATH } from '@/config/app'
 import { useSession } from '@/stores/session'
 import { EmptyState, ErrorState, LoadingState } from '@/components/states'
 import { timeAgo } from '@/lib/format'
@@ -20,7 +21,7 @@ export default function Notifications() {
       <EmptyState
         title="Sign in to see notifications"
         description="Notifications are delivered per role — choose a role to continue."
-        action={<Button asChild><a href="/signin">Sign In</a></Button>}
+        action={<Button asChild><a href={`${BASE_PATH}/signin`}>Sign In</a></Button>}
       />
     )
   }

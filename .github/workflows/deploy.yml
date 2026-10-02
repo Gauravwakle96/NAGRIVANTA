@@ -1,0 +1,74 @@
+name: Deploy NAGRIVANTA to GitHub Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Install dependencies
+        working-directory: frontend
+        run: npm ci
+
+      - name: Lint
+        working-directory: frontend
+        run: npm run lint
+
+      - name: Build frontend (tsc + vite)
+        working-directory: frontend
+        run: npm run build
+        env:
+          # Repository variable (Settings → Secrets and variables → Actions →
+          # Variables). Bakes the deployed FastAPI origin into the bundle,
+          # e.g. https://nagrivanta-api.onrender.com
+          # Unset/empty → http://localhost:8000 default, and the app
+          # silently falls back to the built-in demo provider.
+          VITE_API_URL: ${{ vars.VITE_API_URL }}
+
+      # SPA routing: GitHub Pages only serves real files. Any unknown
+      # path (e.g. /NAGRIVANTA/app/command) returns 404.html, which is a
+      # copy of index.html — the SPA boots and React Router takes over.
+      - name: SPA fallback page
+        working-directory: frontend
+        run: cp dist/index.html dist/404.html
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v4
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: frontend/dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

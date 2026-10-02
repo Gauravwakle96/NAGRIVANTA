@@ -1,0 +1,38 @@
+# Render blueprint — https://render.com/docs/yaml-spec
+# Deploys ONLY the FastAPI backend. The React frontend is served by
+# GitHub Pages at https://gauravwakle96.github.io/NAGRIVANTA/ and talks
+# to this API over HTTPS (CORS is configured for that origin).
+#
+# Apply with: render blueprint use -f render.yaml
+services:
+  - type: web
+    name: nagrivanta-api
+    env: python
+    # The FastAPI package lives in backend/ — uvicorn must run from there.
+    workingDir: backend
+    buildCommand: pip install -r requirements.txt && python train_classifier.py
+    # Trains the TF-IDF classifier deterministically at deploy time; the
+    # API falls back to the keyword heuristic if this step is removed.
+    startCommand: sh -c "uvicorn app.main:app --host 0.0.0.0 --port $PORT"
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: nagrivanta-db
+          property: connectionString
+      - key: CORS_ORIGINS
+        value: https://gauravwakle96.github.io
+      # Demo mode keeps the seeded synthetic dataset + demo role auth.
+      - key: DEMO_MODE
+        value: "true"
+      - key: NOTIFICATION_PROVIDER
+        value: demo
+      - key: AI_PROVIDER
+        value: demo
+
+# Managed PostgreSQL. The app also runs on SQLite (the default when
+# DATABASE_URL is unset), but Render's filesystem is ephemeral — data
+# would reset on every redeploy. Attach the database for persistence.
+databases:
+  - name: nagrivanta-db
+    databaseName: nagrivanta
+    user: nagrivanta

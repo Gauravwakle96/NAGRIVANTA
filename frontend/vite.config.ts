@@ -5,6 +5,8 @@ import { defineConfig } from 'vite'
 
 // https://vite.dev/config/
 export default defineConfig({
+  // GitHub Pages serves the app from the repo subpath: /NAGRIVANTA/
+  base: '/NAGRIVANTA/',
   plugins: [react(), tailwindcss()],
   resolve: {
     alias: {

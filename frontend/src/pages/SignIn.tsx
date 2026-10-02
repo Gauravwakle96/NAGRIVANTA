@@ -5,7 +5,7 @@ import { ArrowRight, ShieldCheck } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
-import { ROLES, APP_NAME } from '@/config/app'
+import { ROLES, APP_NAME, BASE_PATH } from '@/config/app'
 import { homeForRole } from '@/components/layout/nav'
 import { useSession } from '@/stores/session'
 import { DemoModeBadge } from '@/components/layout/AppShell'
@@ -66,7 +66,7 @@ export default function SignIn() {
         <div className="mt-6 flex items-center gap-3">
           <Badge variant="outline" className="font-mono text-[10px]">PHASE 1</Badge>
           <Button asChild variant="ghost" size="sm">
-            <a href="/">Back to home</a>
+            <a href={`${BASE_PATH}/`}>Back to home</a>
           </Button>
         </div>
       </div>

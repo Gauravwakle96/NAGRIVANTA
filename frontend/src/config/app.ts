@@ -23,8 +23,21 @@ export const CITY_CENTER = { lat: 18.5204, lng: 73.8567 }
 export const CITY_NAME = 'Nagari Demo City'
 
 export const DEMO_MODE = import.meta.env.VITE_DEMO_MODE !== 'false'
+
+/**
+ * FastAPI backend origin. Build-time baked from VITE_API_URL (set as a
+ * GitHub repository variable in the Pages deploy workflow); the legacy
+ * VITE_API_BASE_URL spelling still works. Unset → local backend, and
+ * the service registry silently falls back to the demo provider when
+ * the API is unreachable.
+ */
 export const API_BASE_URL: string =
-  (import.meta.env.VITE_API_BASE_URL as string | undefined) ?? 'http://localhost:8000'
+  (import.meta.env.VITE_API_URL as string | undefined) ||
+  (import.meta.env.VITE_API_BASE_URL as string | undefined) ||
+  'http://localhost:8000'
+
+/** Vite base path ('/NAGRIVANTA/' on Pages, '/' locally) without trailing slash. */
+export const BASE_PATH: string = import.meta.env.BASE_URL.replace(/\/+$/, '')
 
 export const IMAGE_MAX_BYTES = 8 * 1024 * 1024
 export const IMAGE_MAX_DIMENSION = 1600
