@@ -54,8 +54,10 @@ jobs:
         working-directory: frontend
         run: cp dist/index.html dist/404.html
 
-      - name: Setup Pages
+      - name: Setup Pages (enables Pages on first run)
         uses: actions/configure-pages@v4
+        with:
+          enablement: true
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
